@@ -7,6 +7,7 @@ import Navbar from '../ui/Navbar';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { messages } from '../../helpers/calendar-messages-ES';
 import CalendarEvent from './CalendarEvent';
+import CalendarModal from './CalendarModal';
 
 const locales = { es };
 const localizer = dateFnsLocalizer({
@@ -59,25 +60,24 @@ const CalendarScreen = () => {
   };
 
   return (
-    <>
+    <div className='calendar__container'>
       <Navbar />
-      <div className='calendar__container'>
-        <Calendar
-          messages={messages}
-          culture='es'
-          localizer={localizer}
-          events={events}
-          startAccessor='start'
-          endAccessor='end'
-          eventPropGetter={eventStyleGetter}
-          components={{ event: CalendarEvent }}
-          onDoubleClickEvent={onDoubleClickEvent}
-          onSelectEvent={onSelectEvent}
-          onView={onViewChange}
-          view={lastView}
-        />
-      </div>
-    </>
+      <Calendar
+        messages={messages}
+        culture='es'
+        localizer={localizer}
+        events={events}
+        startAccessor='start'
+        endAccessor='end'
+        eventPropGetter={eventStyleGetter}
+        components={{ event: CalendarEvent }}
+        onDoubleClickEvent={onDoubleClickEvent}
+        onSelectEvent={onSelectEvent}
+        onView={onViewChange}
+        view={lastView}
+      />
+      <CalendarModal />
+    </div>
   );
 };
 
