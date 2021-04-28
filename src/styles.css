@@ -1,0 +1,11 @@
+.rbc-calendar {
+  height: 100%;
+}
+
+.calendar__container {
+  height: 87vh;
+}
+
+.rbc-header {
+  text-transform: capitalize;
+}
