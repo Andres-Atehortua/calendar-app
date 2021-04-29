@@ -9,3 +9,16 @@
 .rbc-header {
   text-transform: capitalize;
 }
+
+/* Styles for DateTimePicker */
+.react-datetime-picker input:focus {
+  outline: none;
+}
+
+.react-datetime-picker__wrapper {
+  border: none;
+}
+
+.react-datetime-picker__button:focus {
+  outline: none;
+}

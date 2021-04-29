@@ -1,4 +1,9 @@
 import Modal from 'react-modal';
+import DateTimePicker from 'react-datetime-picker';
+import { addHours, isBefore, isEqual, setMinutes, setSeconds } from 'date-fns';
+import Swal from 'sweetalert2';
+import useForm from '../../hooks/useForm';
+
 import './modal.css';
 
 const customStyles = {
@@ -14,9 +19,33 @@ const customStyles = {
 
 Modal.setAppElement('#root');
 
+const now = addHours(setMinutes(setSeconds(new Date(), 0), 0), 1);
+
 const CalendarModal = () => {
+  const { values, handleInputChange } = useForm({
+    title: 'Evento',
+    notes: '',
+    start: now,
+    end: addHours(now, 1),
+  });
+
+  const { notes, title, start, end } = values;
+
   const closeModal = () => {
     console.log('Clsing...');
+  };
+
+  const handleSubmitForm = (e) => {
+    e.preventDefault();
+    if (isEqual(start, end) || isBefore(end, start)) {
+      Swal.fire(
+        'Aviso',
+        'La fecha fin debe ser mayor a la fecha de inicio.',
+        'warning'
+      );
+    } else if (!title.trim()) {
+      Swal.fire('Aviso', 'El evento debe tener un título', 'warning');
+    }
   };
 
   return (
@@ -31,15 +60,29 @@ const CalendarModal = () => {
     >
       <h1> Nuevo evento </h1>
       <hr />
-      <form className='container'>
+      <form onSubmit={handleSubmitForm} className='container'>
         <div className='form-group'>
           <label>Fecha y hora inicio</label>
-          <input className='form-control' placeholder='Fecha inicio' />
+          <DateTimePicker
+            className='form-control'
+            value={start}
+            minDate={new Date()}
+            onChange={(e) =>
+              handleInputChange({ target: { name: 'start', value: e } })
+            }
+          />
         </div>
 
         <div className='form-group'>
           <label>Fecha y hora fin</label>
-          <input className='form-control' placeholder='Fecha inicio' />
+          <DateTimePicker
+            className='form-control'
+            minDate={start}
+            value={end}
+            onChange={(e) =>
+              handleInputChange({ target: { name: 'end', value: e } })
+            }
+          />
         </div>
 
         <hr />
@@ -51,6 +94,8 @@ const CalendarModal = () => {
             placeholder='Título del evento'
             name='title'
             autoComplete='off'
+            value={title}
+            onChange={handleInputChange}
           />
           <small id='emailHelp' className='form-text text-muted'>
             Una descripción corta
@@ -64,6 +109,8 @@ const CalendarModal = () => {
             placeholder='Notas'
             rows='5'
             name='notes'
+            value={notes}
+            onChange={handleInputChange}
             style={{ resize: 'none' }}
           ></textarea>
           <small id='emailHelp' className='form-text text-muted'>
