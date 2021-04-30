@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Calendar, dateFnsLocalizer } from 'react-big-calendar';
-import { format, parse, startOfWeek, getDay, add } from 'date-fns';
+import { format, parse, startOfWeek, getDay } from 'date-fns';
 import { es } from 'date-fns/locale';
 import Navbar from '../ui/Navbar';
 
@@ -8,6 +8,10 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { messages } from '../../helpers/calendar-messages-ES';
 import CalendarEvent from './CalendarEvent';
 import CalendarModal from './CalendarModal';
+import { useDispatch, useSelector } from 'react-redux';
+import { uiSetOpenModalAction } from '../../redux/actions/uiActions';
+import { calendarSetActiveAction } from '../../redux/actions/calendarActions';
+import AddNewFab from '../ui/AddNewFab';
 
 const locales = { es };
 const localizer = dateFnsLocalizer({
@@ -18,22 +22,13 @@ const localizer = dateFnsLocalizer({
   locales,
 });
 
-const events = [
-  {
-    title: 'Cumpleaños',
-    start: add(new Date(), { hours: 10 }),
-    end: add(new Date(), { hours: 13 }),
-    bgcolor: '#fafafa',
-    user: {
-      _id: 123,
-      name: 'Andrés',
-    },
-  },
-];
 const CalendarScreen = () => {
   const [lastView, setLastView] = useState(
     localStorage.getItem('lastView') || 'month'
   );
+
+  const dispath = useDispatch();
+  const { events } = useSelector((state) => state.calendar);
 
   const eventStyleGetter = (event, start, end, isSelected) => {
     const style = {
@@ -47,11 +42,12 @@ const CalendarScreen = () => {
   };
 
   const onDoubleClickEvent = (e) => {
-    console.log(e);
+    dispath(uiSetOpenModalAction());
   };
 
   const onSelectEvent = (e) => {
     console.log(e);
+    dispath(calendarSetActiveAction(e));
   };
 
   const onViewChange = (e) => {
@@ -76,6 +72,9 @@ const CalendarScreen = () => {
         onView={onViewChange}
         view={lastView}
       />
+
+      <AddNewFab />
+
       <CalendarModal />
     </div>
   );

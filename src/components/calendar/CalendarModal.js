@@ -2,9 +2,11 @@ import Modal from 'react-modal';
 import DateTimePicker from 'react-datetime-picker';
 import { addHours, isBefore, isEqual, setMinutes, setSeconds } from 'date-fns';
 import Swal from 'sweetalert2';
-import useForm from '../../hooks/useForm';
+import { useDispatch, useSelector } from 'react-redux';
 
+import useForm from '../../hooks/useForm';
 import './modal.css';
+import { uiSetCloseModalAction } from '../../redux/actions/uiActions';
 
 const customStyles = {
   content: {
@@ -22,8 +24,11 @@ Modal.setAppElement('#root');
 const now = addHours(setMinutes(setSeconds(new Date(), 0), 0), 1);
 
 const CalendarModal = () => {
-  const { values, handleInputChange } = useForm({
-    title: 'Evento',
+  const { openModal } = useSelector((state) => state.ui);
+  const dispatch = useDispatch();
+
+  const { values, handleInputChange, reset } = useForm({
+    title: '',
     notes: '',
     start: now,
     end: addHours(now, 1),
@@ -32,7 +37,7 @@ const CalendarModal = () => {
   const { notes, title, start, end } = values;
 
   const closeModal = () => {
-    console.log('Clsing...');
+    dispatch(uiSetCloseModalAction());
   };
 
   const handleSubmitForm = (e) => {
@@ -45,12 +50,14 @@ const CalendarModal = () => {
       );
     } else if (!title.trim()) {
       Swal.fire('Aviso', 'El evento debe tener un título', 'warning');
+    } else {
+      dispatch(uiSetCloseModalAction());
+      reset();
     }
   };
-
   return (
     <Modal
-      isOpen={true}
+      isOpen={openModal}
       onRequestClose={closeModal}
       style={customStyles}
       contentLabel='no se loco'
