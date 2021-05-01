@@ -9,3 +9,7 @@ export const calendarAddNewAction = (event) => ({
   type: calendarTypes.ADD_NEW,
   payload: event,
 });
+
+export const calendarClearActiveAction = () => ({
+  type: calendarTypes.CLEAR_ACTIVE,
+});

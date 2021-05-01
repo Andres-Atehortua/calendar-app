@@ -46,7 +46,6 @@ const CalendarScreen = () => {
   };
 
   const onSelectEvent = (e) => {
-    console.log(e);
     dispath(calendarSetActiveAction(e));
   };
 

@@ -4,9 +4,14 @@ import { addHours, isBefore, isEqual, setMinutes, setSeconds } from 'date-fns';
 import Swal from 'sweetalert2';
 import { useDispatch, useSelector } from 'react-redux';
 
+import { uiSetCloseModalAction } from '../../redux/actions/uiActions';
+import {
+  calendarAddNewAction,
+  calendarClearActiveAction,
+} from '../../redux/actions/calendarActions';
 import useForm from '../../hooks/useForm';
 import './modal.css';
-import { uiSetCloseModalAction } from '../../redux/actions/uiActions';
+import { useEffect } from 'react';
 
 const customStyles = {
   content: {
@@ -25,9 +30,10 @@ const now = addHours(setMinutes(setSeconds(new Date(), 0), 0), 1);
 
 const CalendarModal = () => {
   const { openModal } = useSelector((state) => state.ui);
+  const { activeEvent } = useSelector((state) => state.calendar);
   const dispatch = useDispatch();
 
-  const { values, handleInputChange, reset } = useForm({
+  const { values, handleInputChange, reset, setNewValues } = useForm({
     title: '',
     notes: '',
     start: now,
@@ -36,8 +42,17 @@ const CalendarModal = () => {
 
   const { notes, title, start, end } = values;
 
+  useEffect(() => {
+    if (activeEvent) {
+      setNewValues(activeEvent);
+    }
+  }, [activeEvent, setNewValues]);
+
   const closeModal = () => {
     dispatch(uiSetCloseModalAction());
+
+    activeEvent && dispatch(calendarClearActiveAction());
+    reset();
   };
 
   const handleSubmitForm = (e) => {
@@ -51,10 +66,17 @@ const CalendarModal = () => {
     } else if (!title.trim()) {
       Swal.fire('Aviso', 'El evento debe tener un título', 'warning');
     } else {
+      dispatch(
+        calendarAddNewAction({
+          ...values,
+          id: new Date().getTime(),
+          user: { _id: '123', name: 'Andrés' },
+        })
+      );
       dispatch(uiSetCloseModalAction());
-      reset();
     }
   };
+
   return (
     <Modal
       isOpen={openModal}

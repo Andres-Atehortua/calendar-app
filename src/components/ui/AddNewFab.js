@@ -7,7 +7,7 @@ const AddNewFab = () => {
     dispatch(uiSetOpenModalAction());
   };
   return (
-    <button onClick={handleAdd} className='btn btn-primary fab'>
+    <button onClick={handleAdd} className='btn btn-primary fab '>
       <i className='fas fa-plus'></i>
     </button>
   );
