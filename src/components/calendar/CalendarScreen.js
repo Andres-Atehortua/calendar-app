@@ -10,8 +10,12 @@ import CalendarEvent from './CalendarEvent';
 import CalendarModal from './CalendarModal';
 import { useDispatch, useSelector } from 'react-redux';
 import { uiSetOpenModalAction } from '../../redux/actions/uiActions';
-import { calendarSetActiveAction } from '../../redux/actions/calendarActions';
+import {
+  calendarClearActiveAction,
+  calendarSetActiveAction,
+} from '../../redux/actions/calendarActions';
 import AddNewFab from '../ui/AddNewFab';
+import DeleteEventFab from '../ui/DeleteEventFab';
 
 const locales = { es };
 const localizer = dateFnsLocalizer({
@@ -27,8 +31,8 @@ const CalendarScreen = () => {
     localStorage.getItem('lastView') || 'month'
   );
 
-  const dispath = useDispatch();
-  const { events } = useSelector((state) => state.calendar);
+  const dispatch = useDispatch();
+  const { events, activeEvent } = useSelector((state) => state.calendar);
 
   const eventStyleGetter = (event, start, end, isSelected) => {
     const style = {
@@ -42,16 +46,21 @@ const CalendarScreen = () => {
   };
 
   const onDoubleClickEvent = (e) => {
-    dispath(uiSetOpenModalAction());
+    dispatch(uiSetOpenModalAction());
   };
 
   const onSelectEvent = (e) => {
-    dispath(calendarSetActiveAction(e));
+    dispatch(calendarSetActiveAction(e));
   };
 
   const onViewChange = (e) => {
     setLastView(e);
     localStorage.setItem('lastView', e);
+  };
+
+  const onSelectSlot = (e) => {
+    // TODO: Ver lo de seleccionar por fuera
+    activeEvent && dispatch(calendarClearActiveAction());
   };
 
   return (
@@ -70,9 +79,12 @@ const CalendarScreen = () => {
         onSelectEvent={onSelectEvent}
         onView={onViewChange}
         view={lastView}
+        selectable
+        onSelectSlot={onSelectSlot}
       />
 
       <AddNewFab />
+      {activeEvent && <DeleteEventFab />}
 
       <CalendarModal />
     </div>

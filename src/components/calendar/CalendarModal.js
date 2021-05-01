@@ -8,10 +8,12 @@ import { uiSetCloseModalAction } from '../../redux/actions/uiActions';
 import {
   calendarAddNewAction,
   calendarClearActiveAction,
+  calendarUpdateAction,
 } from '../../redux/actions/calendarActions';
 import useForm from '../../hooks/useForm';
 import './modal.css';
 import { useEffect } from 'react';
+import { useRef } from 'react';
 
 const customStyles = {
   content: {
@@ -40,19 +42,29 @@ const CalendarModal = () => {
     end: addHours(now, 1),
   });
 
+  const setted = useRef(false);
+
   const { notes, title, start, end } = values;
 
   useEffect(() => {
-    if (activeEvent) {
+    if (activeEvent && !setted.current) {
+      setted.current = true;
       setNewValues(activeEvent);
     }
-  }, [activeEvent, setNewValues]);
+
+    if (!activeEvent && setted.current) {
+      setted.current = false;
+      reset();
+    }
+  }, [activeEvent, setNewValues, reset]);
 
   const closeModal = () => {
-    dispatch(uiSetCloseModalAction());
-
+    if (setted.current) {
+      setted.current = false;
+    }
     activeEvent && dispatch(calendarClearActiveAction());
     reset();
+    dispatch(uiSetCloseModalAction());
   };
 
   const handleSubmitForm = (e) => {
@@ -66,14 +78,18 @@ const CalendarModal = () => {
     } else if (!title.trim()) {
       Swal.fire('Aviso', 'El evento debe tener un título', 'warning');
     } else {
-      dispatch(
-        calendarAddNewAction({
-          ...values,
-          id: new Date().getTime(),
-          user: { _id: '123', name: 'Andrés' },
-        })
-      );
-      dispatch(uiSetCloseModalAction());
+      if (activeEvent) {
+        dispatch(calendarUpdateAction(values));
+      } else {
+        dispatch(
+          calendarAddNewAction({
+            ...values,
+            id: new Date().getTime(),
+            user: { _id: '123', name: 'Andrés' },
+          })
+        );
+      }
+      closeModal();
     }
   };
 
@@ -87,7 +103,7 @@ const CalendarModal = () => {
       overlayClassName='modal-fondo'
       closeTimeoutMS={200}
     >
-      <h1> Nuevo evento </h1>
+      <h1>{activeEvent ? 'Editar evento' : 'Nuevo evento'}</h1>
       <hr />
       <form onSubmit={handleSubmitForm} className='container'>
         <div className='form-group'>

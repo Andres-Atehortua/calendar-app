@@ -1,5 +1,6 @@
 const CalendarEvent = ({ event }) => {
   const { title, user } = event;
+
   return (
     <div>
       <span>{title}</span>

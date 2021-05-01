@@ -1,9 +1,13 @@
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { calendarClearActiveAction } from '../../redux/actions/calendarActions';
 import { uiSetOpenModalAction } from '../../redux/actions/uiActions';
 
 const AddNewFab = () => {
   const dispatch = useDispatch();
+  const { activeEvent } = useSelector((state) => state.calendar);
   const handleAdd = () => {
+    activeEvent && dispatch(calendarClearActiveAction());
+
     dispatch(uiSetOpenModalAction());
   };
   return (
