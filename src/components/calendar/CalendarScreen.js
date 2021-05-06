@@ -59,7 +59,6 @@ const CalendarScreen = () => {
   };
 
   const onSelectSlot = (e) => {
-    // TODO: Ver lo de seleccionar por fuera
     activeEvent && dispatch(calendarClearActiveAction());
   };
 

@@ -1,8 +1,10 @@
-import { Route } from 'react-router-dom';
+import { Redirect, Route } from 'react-router-dom';
 
-const PublicRoutes = ({ children, ...rest }) => {
+const PublicRoutes = ({ isAuthenticated, children, ...rest }) => {
   // TODO: utlizar auth para redireccionar
-  return <Route {...rest}>{children}</Route>;
+  return (
+    <Route {...rest}>{!isAuthenticated ? children : <Redirect to='/' />}</Route>
+  );
 };
 
 export default PublicRoutes;
