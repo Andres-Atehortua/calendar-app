@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Calendar, dateFnsLocalizer } from 'react-big-calendar';
 import { format, parse, startOfWeek, getDay } from 'date-fns';
 import { es } from 'date-fns/locale';
@@ -13,6 +13,7 @@ import { uiSetOpenModalAction } from '../../redux/actions/uiActions';
 import {
   calendarClearActiveAction,
   calendarSetActiveAction,
+  startLoadAction,
 } from '../../redux/actions/calendarActions';
 import AddNewFab from '../ui/AddNewFab';
 import DeleteEventFab from '../ui/DeleteEventFab';
@@ -33,10 +34,11 @@ const CalendarScreen = () => {
 
   const dispatch = useDispatch();
   const { events, activeEvent } = useSelector((state) => state.calendar);
+  const { uid } = useSelector((state) => state.auth);
 
   const eventStyleGetter = (event, start, end, isSelected) => {
     const style = {
-      backgroundColor: 'red',
+      backgroundColor: uid === event.user._id ? 'red' : 'blue',
       borderRadius: '0px',
       opacity: 0.8,
       display: 'block',
@@ -44,6 +46,10 @@ const CalendarScreen = () => {
     };
     return { style };
   };
+
+  useEffect(() => {
+    dispatch(startLoadAction());
+  }, [dispatch]);
 
   const onDoubleClickEvent = (e) => {
     dispatch(uiSetOpenModalAction());

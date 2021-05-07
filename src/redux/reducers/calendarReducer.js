@@ -1,21 +1,7 @@
-import { add } from 'date-fns';
 import { calendarTypes } from '../types/calendarTypes';
 
 const initialState = {
-  events: [
-    {
-      id: new Date().getTime(),
-      title: 'Cumpleaños',
-      start: add(new Date(), { hours: 10 }),
-      end: add(new Date(), { hours: 13 }),
-      notes: 'ay dios mio',
-      bgcolor: '#fafafa',
-      user: {
-        _id: 123,
-        name: 'Andrés',
-      },
-    },
-  ],
+  events: [],
   activeEvent: null,
 };
 
@@ -42,6 +28,13 @@ export const calendarReducer = (state = initialState, action) => {
         ),
         activeEvent: null,
       };
+
+    case calendarTypes.LOAD:
+      return { ...state, events: [...action.payload] };
+
+    case calendarTypes.CLEAR_LOGOUT:
+      return { ...initialState };
+
     default:
       return state;
   }

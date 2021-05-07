@@ -6,9 +6,9 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { uiSetCloseModalAction } from '../../redux/actions/uiActions';
 import {
-  calendarAddNewAction,
+  startAddNewAction,
   calendarClearActiveAction,
-  calendarUpdateAction,
+  startUpdateAction,
 } from '../../redux/actions/calendarActions';
 import useForm from '../../hooks/useForm';
 import './modal.css';
@@ -79,15 +79,9 @@ const CalendarModal = () => {
       Swal.fire('Aviso', 'El evento debe tener un título', 'warning');
     } else {
       if (activeEvent) {
-        dispatch(calendarUpdateAction(values));
+        dispatch(startUpdateAction(values));
       } else {
-        dispatch(
-          calendarAddNewAction({
-            ...values,
-            id: new Date().getTime(),
-            user: { _id: '123', name: 'Andrés' },
-          })
-        );
+        dispatch(startAddNewAction(values));
       }
       closeModal();
     }
@@ -111,7 +105,6 @@ const CalendarModal = () => {
           <DateTimePicker
             className='form-control'
             value={start}
-            minDate={new Date()}
             onChange={(e) =>
               handleInputChange({ target: { name: 'start', value: e } })
             }
