@@ -26,7 +26,7 @@ const customStyles = {
   },
 };
 
-Modal.setAppElement('#root');
+if (process.env.NODE_ENV !== 'test') Modal.setAppElement('#root');
 
 const now = addHours(setMinutes(setSeconds(new Date(), 0), 0), 1);
 
